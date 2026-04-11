@@ -1,0 +1,122 @@
+/* ── Local design tokens ──────────────────────────────── */
+:root {
+  --wa-green: #25d366;
+  --wa-green-glow: rgba(37, 211, 102, 0.5);
+  --wa-green-ripple: rgba(37, 211, 102, 0.35);
+  --wa-tooltip-bg: #111827;
+}
+
+/* ── Wrapper (fixed anchor + hover trigger) ──────────── */
+.whatsapp-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* ── Tooltip (CSS-only, no JS state) ─────────────────── */
+.whatsapp-tooltip {
+  background: var(--wa-tooltip-bg);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  position: relative;
+}
+
+.whatsapp-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  border: 6px solid transparent;
+  border-top-color: var(--wa-tooltip-bg);
+}
+
+/* Show tooltip on hover or keyboard focus */
+.whatsapp-wrapper:hover .whatsapp-tooltip,
+.whatsapp-wrapper:focus-within .whatsapp-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Float wrapper (Y animation isolated here) ───────── */
+.whatsapp-float {
+  position: relative;
+  width: 62px;
+  height: 62px;
+  animation: wa-float 3s ease-in-out infinite;
+}
+
+/* ── Ripple rings ─────────────────────────────────────── */
+.whatsapp-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--wa-green-ripple);
+  animation: wa-ripple 2.5s ease-out infinite;
+  pointer-events: none;
+}
+
+.whatsapp-ripple--delayed {
+  animation-delay: 1.25s;
+}
+
+/* ── FAB anchor (scale on hover, no JS transform) ───── */
+.whatsapp-fab {
+  position: absolute;
+  inset: 0;
+  background-color: var(--wa-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px var(--wa-green-glow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  outline-offset: 4px;
+}
+
+.whatsapp-fab:hover {
+  transform: scale(1.12);
+  box-shadow: 0 14px 38px rgba(37, 211, 102, 0.65);
+}
+
+.whatsapp-fab:focus-visible {
+  outline: 2px solid var(--wa-green);
+}
+
+/* ── Keyframes ───────────────────────────────────────── */
+@keyframes wa-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes wa-ripple {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  70%  { transform: scale(1.9); opacity: 0;   }
+  100% { transform: scale(1.9); opacity: 0;   }
+}
+
+/* ── Respect reduced-motion preference ───────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-float {
+    animation: none;
+  }
+  .whatsapp-ripple {
+    animation: none;
+    opacity: 0;
+  }
+}
